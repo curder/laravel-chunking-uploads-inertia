@@ -8,21 +8,20 @@ use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
 use Pion\Laravel\ChunkUpload\Handler\ContentRangeUploadHandler;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Str;
-use function dd;
+use function explode;
 
 class FileStoreController extends Controller
 {
     public function __invoke(Request $request)
     {
 //        throw new UploadMissingFileException;
-
         $receiver = new FileReceiver(
             UploadedFile::fake()->createWithContent('file', $request->getContent()),
             $request,
             ContentRangeUploadHandler::class
         );
 
-        if($receiver->isUploaded() === false) {
+        if ($receiver->isUploaded() === false) {
             throw new UploadMissingFileException;
         }
 
@@ -37,10 +36,13 @@ class FileStoreController extends Controller
 
     private function storeFile(Request $request, UploadedFile $file)
     {
-        $extension = $file->guessExtension();
+        $name = $request->header('x-client-original-name');
+
+        $extension = last(explode('.', $name));
 
         $request->user()->files()->create([
-           'file_path' => $file->storeAs('files', Str::uuid() . '.' . $extension, 'public'),
+            'name' => $name,
+            'path' => $file->storeAs('files', Str::uuid() . '.' . $extension, 'public'),
         ]);
     }
 }

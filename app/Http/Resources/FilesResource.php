@@ -20,7 +20,7 @@ class FilesResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'path' => $this->resource->file_path,
+            'name' => $this->resource->name,
             'url' => $this->resource->url,
         ];
     }

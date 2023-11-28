@@ -44,6 +44,7 @@ const submit = () => {
     file: state.file,
     chunkSize: 10 * 1024, // 10 mb
     headers: {
+      'X-CLIENT-ORIGINAL-NAME': state.file.name,
       'X-CSRF-TOKEN': usePage().props.csrf_token,
     },
   });
@@ -52,6 +53,10 @@ const submit = () => {
     state.error = null
     state.uploading = true
   })
+
+  state.uploader.on('attemptFailure', ({ detail }) => {
+    console.log(`${state.file.name}: The attempt failed!`, detail);
+  });
 
   state.uploader.on('progress', progress => {
     state.progress = progress.detail;
@@ -64,7 +69,7 @@ const submit = () => {
   state.uploader.on('success', () => {
     state.reset()
     router.reload({
-      only: ['fi les'],
+      only: ['files'],
       preserveScroll: true,
     })
   })
@@ -120,7 +125,7 @@ const submit = () => {
             <ul class="space-y-1" v-if="files.data.length">
               <li v-for="file in files.data" :key="file.id">
                 <a class="text-blue-400 hover:text-blue-600" :href="file.url">
-                  {{ file.path }}
+                  {{ file.name }}
                 </a>
               </li>
             </ul>

@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Storage;
 class File extends Model
 {
     protected $fillable = [
-        'file_path'
+        'name', 'path'
     ];
 
     public function url(): Attribute
     {
-        return Attribute::get(fn () => Storage::disk('public')->url($this->file_path));
+        return Attribute::get(fn () => Storage::disk('public')->url($this->path));
     }
 }
