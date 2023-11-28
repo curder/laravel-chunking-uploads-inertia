@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head, usePage} from '@inertiajs/vue3';
-import {reactive, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {createUpload} from "@mux/upchunk";
 
@@ -14,7 +14,10 @@ const file = ref(null)
 
 const state = reactive({
   file: null,
-  uploader: null
+  uploader: null,
+  progress: 0,
+  uploading: false,
+  formattedProgress: computed(() => Math.round(state.progress))
 })
 
 const submit = () => {
@@ -32,16 +35,19 @@ const submit = () => {
     headers: {
       'X-CSRF-TOKEN': usePage().props.csrf_token,
     },
-    onProgress: (progress) => {
-      console.log(progress)
-    },
-    onSuccess: (data) => {
-      console.log(data)
-    },
-    onError: (error) => {
-      console.log(error)
-    },
   });
+
+  state.uploader.on('attempt', () => {
+    state.uploading = true
+  })
+
+  state.uploader.on('progress', progress => {
+    state.progress = progress.detail;
+  })
+  state.uploader.on('success', () => {
+    state.uploading = false
+    state.progress = 0
+  })
 }
 </script>
 
@@ -56,11 +62,22 @@ const submit = () => {
     <div class="py-12">
       <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-4">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-          <form class="p-6 text-gray-900" @submit.prevent="submit">
+          <form class="p-6 text-gray-900 space-y-4" @submit.prevent="submit">
 
             <div class="flex items-center">
               <input type="file" name="file" ref="file" class="flex-grow">
               <PrimaryButton>Upload</PrimaryButton>
+            </div>
+
+            <div v-if="state.uploading">
+              <div class="bg-gray-100 shadow-inner h-3 rounded-full overflow-hidden">
+                <div class="bg-blue-500 h-full transform-all duration-200" :style="{width: `${state.progress}%`}"></div>
+              </div>
+
+              <div class="flex items-center justify-between space-y-2">
+                <div>暂停</div>
+                <div class="text-sm">{{ `${state.formattedProgress}%` }}</div>
+              </div>
             </div>
 
           </form>
