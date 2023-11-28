@@ -7,7 +7,7 @@ import {createUpload} from "@mux/upchunk";
 
 
 defineProps({
-  files: Array,
+  files: Object,
 })
 
 const file = ref(null)
@@ -117,11 +117,13 @@ const submit = () => {
 
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
           <div class="p-6 text-gray-900">
-            <template v-if="files.length">
-              <div v-for="file in files" :key="file.id">
-                {{ file.file_path }}
-              </div>
-            </template>
+            <ul class="space-y-1" v-if="files.data.length">
+              <li v-for="file in files.data" :key="file.id">
+                <a class="text-blue-400 hover:text-blue-600" :href="file.url">
+                  {{ file.path }}
+                </a>
+              </li>
+            </ul>
             <template v-else>
               暂时没有文件!
             </template>
