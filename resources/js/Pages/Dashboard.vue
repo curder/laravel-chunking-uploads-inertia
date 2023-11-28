@@ -17,6 +17,7 @@ const initialState = {
   uploader: null,
   progress: 0,
   uploading: false,
+  error: null,
 }
 
 const state = reactive({
@@ -48,11 +49,16 @@ const submit = () => {
   });
 
   state.uploader.on('attempt', () => {
+    state.error = null
     state.uploading = true
   })
 
   state.uploader.on('progress', progress => {
     state.progress = progress.detail;
+  })
+
+  state.uploader.on('error', error => {
+    state.error = error.detail
   })
 
   state.uploader.on('success', () => {
@@ -90,12 +96,20 @@ const submit = () => {
 
               <div class="flex items-center justify-between text-sm space-y-2">
                 <div class="space-x-2">
-                  <button type="button" v-if="!state.uploader.paused" @click="state.uploader.pause()" class="text-blue-500">暂停</button>
-                  <button type="button" v-if="state.uploader.paused" @click="state.uploader.resume()" class="text-blue-500">恢复</button>
+                  <button type="button" v-if="!state.uploader.paused" @click="state.uploader.pause()"
+                          class="text-blue-500">暂停
+                  </button>
+                  <button type="button" v-if="state.uploader.paused" @click="state.uploader.resume()"
+                          class="text-blue-500">恢复
+                  </button>
                   <button type="button" @click="cancel" class="text-blue-500">取消</button>
                 </div>
                 <div>{{ `${state.formattedProgress}%` }}</div>
               </div>
+            </div>
+
+            <div class="text-red-600 text-sm" v-if="state.error">
+              {{ state.error.message }}
             </div>
 
           </form>
