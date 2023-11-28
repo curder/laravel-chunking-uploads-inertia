@@ -25,6 +25,11 @@ const state = reactive({
   reset: () => Object.assign(state, initialState),
 })
 
+const cancel = () => {
+  state.uploader.abort()
+  state.reset()
+}
+
 const submit = () => {
   state.file = file.value.files[0];
 
@@ -83,9 +88,11 @@ const submit = () => {
                 <div class="bg-blue-500 h-full transform-all duration-200" :style="{width: `${state.progress}%`}"></div>
               </div>
 
-              <div class="flex items-center justify-between space-y-2">
-                <div>暂停</div>
-                <div class="text-sm">{{ `${state.formattedProgress}%` }}</div>
+              <div class="flex items-center justify-between text-sm space-y-2">
+                <div>
+                  <button type="button" @click="cancel" class="text-blue-500">取消</button>
+                </div>
+                <div>{{ `${state.formattedProgress}%` }}</div>
               </div>
             </div>
 
