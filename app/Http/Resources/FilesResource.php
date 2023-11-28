@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
-* @property File $resource
+ * @property File $resource
  */
 class FilesResource extends JsonResource
 {

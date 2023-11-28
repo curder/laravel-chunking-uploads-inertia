@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
-use Pion\Laravel\ChunkUpload\Handler\ContentRangeUploadHandler;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
-use Str;
-use function explode;
+use Pion\Laravel\ChunkUpload\Handler\ContentRangeUploadHandler;
+use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
 
 class FileStoreController extends Controller
 {
     public function __invoke(Request $request)
     {
-//        throw new UploadMissingFileException;
+        //        throw new UploadMissingFileException;
         $receiver = new FileReceiver(
             UploadedFile::fake()->createWithContent('file', $request->getContent()),
             $request,
@@ -36,13 +35,12 @@ class FileStoreController extends Controller
 
     private function storeFile(Request $request, UploadedFile $file)
     {
-        $name = $request->header('x-client-original-name');
-
+        $name = $request->get('name');
         $extension = last(explode('.', $name));
 
         $request->user()->files()->create([
             'name' => $name,
-            'path' => $file->storeAs('files', Str::uuid() . '.' . $extension, 'public'),
+            'path' => $file->storeAs('files', Str::uuid().'.'.$extension, 'public'),
         ]);
     }
 }

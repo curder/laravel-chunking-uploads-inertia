@@ -39,12 +39,11 @@ const submit = () => {
   }
 
   state.uploader = createUpload({
-    endpoint: route('files.store'),
+    endpoint: `${route('files.store')}?name=${state.file.name}`,
     method: 'post',
     file: state.file,
     chunkSize: 10 * 1024, // 10 mb
     headers: {
-      'X-CLIENT-ORIGINAL-NAME': state.file.name,
       'X-CSRF-TOKEN': usePage().props.csrf_token,
     },
   });

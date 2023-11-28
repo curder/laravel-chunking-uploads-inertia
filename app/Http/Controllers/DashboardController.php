@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\FilesResource;
 use Illuminate\Http\Request;
+use App\Http\Resources\FilesResource;
+
 use function inertia;
 
 class DashboardController extends Controller
