@@ -58,7 +58,7 @@ const submit = () => {
   state.uploader.on('success', () => {
     state.reset()
     router.reload({
-      only: ['files'],
+      only: ['fi les'],
       preserveScroll: true,
     })
   })
@@ -89,7 +89,9 @@ const submit = () => {
               </div>
 
               <div class="flex items-center justify-between text-sm space-y-2">
-                <div>
+                <div class="space-x-2">
+                  <button type="button" v-if="!state.uploader.paused" @click="state.uploader.pause()" class="text-blue-500">暂停</button>
+                  <button type="button" v-if="state.uploader.paused" @click="state.uploader.resume()" class="text-blue-500">恢复</button>
                   <button type="button" @click="cancel" class="text-blue-500">取消</button>
                 </div>
                 <div>{{ `${state.formattedProgress}%` }}</div>
